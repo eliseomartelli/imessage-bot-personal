@@ -20,12 +20,12 @@ func (d *Dependencies) PongRoute(msg imessage.Incoming) {
 
 type Dependencies struct {
 	imessage *imessage.Messages
-	logger *log.Logger
+	logger   *log.Logger
 }
 
 func NewRoutes(logger *log.Logger, imessage *imessage.Messages) Dependencies {
 	return Dependencies{
-		logger: logger,
+		logger:   logger,
 		imessage: imessage,
 	}
 }

@@ -28,10 +28,10 @@ func (d *Dependencies) DietaRoute(msg imessage.Incoming) {
 }
 
 type Dependencies struct {
-	repo     *dietaRepository
+	repo            *dietaRepository
 	allowedContacts *hashset.Hashset
-	logger *log.Logger
-	imessage *imessage.Messages
+	logger          *log.Logger
+	imessage        *imessage.Messages
 }
 
 func NewRoutes(repo *dietaRepository, allowedContacts *hashset.Hashset, logger *log.Logger, imessage *imessage.Messages) Dependencies {
