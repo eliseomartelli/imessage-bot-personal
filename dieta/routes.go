@@ -8,15 +8,17 @@ import (
 	"github.com/golift/imessage"
 )
 
+const dieta_route_reponse string = `%s
+
+Questo era un messaggio automatico.`
+
 func (d *Dependencies) SetupRoutes() {
 	d.imessage.IncomingCall("(?i)(mangiare)|(?i)dieta", d.DietaRoute)
 }
 
 func (d *Dependencies) DietaRoute(msg imessage.Incoming) {
 	if d.allowedContacts.Contains(msg.From) {
-		res := fmt.Sprintf(`%s
-
-	Questo era un messaggio automatico.`, d.repo.GetForToday())
+		res := fmt.Sprintf(dieta_route_reponse, d.repo.GetForToday())
 		d.imessage.Send(imessage.Outgoing{
 			To:   msg.From,
 			Text: res,
