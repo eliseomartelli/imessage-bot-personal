@@ -5,6 +5,8 @@ import (
 	"os"
 	"sendmessages/dieta"
 	"sendmessages/ping_pong"
+	"sendmessages/hashset"
+	"strings"
 
 	"github.com/golift/imessage"
 )
@@ -22,8 +24,13 @@ func main() {
 		log.Fatalln(err)
 	}
 
+	allowed, err := getAllowedList(getEnvWithFallback("ALLOWED_FILE_PATH", "allowed"))
+	if err != nil {
+		log.Fatalln(err)
+	}
+
 	dietaRepository := dieta.NewRepository(getEnvWithFallback("DIET_FILE_PATH", "/tmp/dieta.md"))
-	dietaRoutes := dieta.NewRoutes(&dietaRepository, logger, imessage)
+	dietaRoutes := dieta.NewRoutes(&dietaRepository, allowed, logger, imessage)
 	dietaRoutes.SetupRoutes()
 
 	pingPongRoutes := ping_pong.NewRoutes(logger, imessage)
@@ -43,4 +50,20 @@ func getEnvWithFallback(env, fallback string) string {
 		return actual
 	}
 	return fallback
+}
+
+func getAllowedList(path string) (*hashset.Hashset, error) {
+	allowed := hashset.New()
+
+	file, err := os.ReadFile(path)
+	if err != nil {
+		return nil, err
+	}
+
+	allowedContacts := strings.Split(string(file), "\n")
+
+	for _, contact := range allowedContacts {
+		allowed.Add(contact)
+	}
+	return allowed, nil
 }
