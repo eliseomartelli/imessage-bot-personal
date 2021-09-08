@@ -24,7 +24,7 @@ func main() {
 		log.Fatalln(err)
 	}
 
-	allowed, err := getAllowedList(getEnvWithFallback("ALLOWED_FILE_PATH", "allowed"))
+	allowed, err := getAllowedList(logger, getEnvWithFallback("ALLOWED_FILE_PATH", "allowed"))
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -41,6 +41,7 @@ func main() {
 	if err != nil {
 		log.Fatalln(err)
 	}
+	defer imessage.Stop()
 	for {
 	}
 }
@@ -52,7 +53,7 @@ func getEnvWithFallback(env, fallback string) string {
 	return fallback
 }
 
-func getAllowedList(path string) (*hashset.Hashset, error) {
+func getAllowedList(logger *log.Logger, path string) (*hashset.Hashset, error) {
 	allowed := hashset.New()
 
 	file, err := os.ReadFile(path)
@@ -63,7 +64,10 @@ func getAllowedList(path string) (*hashset.Hashset, error) {
 	allowedContacts := strings.Split(string(file), "\n")
 
 	for _, contact := range allowedContacts {
-		allowed.Add(contact)
+		if strings.HasPrefix(contact, "+") {
+			allowed.Add(contact)
+			logger.Printf("Added %s to allowed contacts.", contact)
+		}
 	}
 	return allowed, nil
 }
