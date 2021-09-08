@@ -4,27 +4,33 @@ import (
 	"log"
 	"os"
 	"sendmessages/dieta"
+	"sendmessages/ping_pong"
 
 	"github.com/golift/imessage"
 )
 
 func main() {
+	logger := log.New(os.Stdout, "[imessage-bot] ", log.LstdFlags)
 	c := &imessage.Config{
-		SQLPath:   getEnvWithFallback("IMESSAGE_DB_PATH", ""),
 		QueueSize: 10,
 		Retries:   3,
+		Timeout:   0,
+		SQLPath:   getEnvWithFallback("IMESSAGE_DB_PATH", ""),
 	}
-	s, err := imessage.Init(c)
+	imessage, err := imessage.Init(c)
 	if err != nil {
 		log.Fatalln(err)
 	}
 
-	dietaRepository := dieta.NewDietaRepository(getEnvWithFallback("DIET_FILE_PATH", "/tmp/dieta.md"))
-	dietaRoutes := dieta.New(&dietaRepository, s)
+	dietaRepository := dieta.NewRepository(getEnvWithFallback("DIET_FILE_PATH", "/tmp/dieta.md"))
+	dietaRoutes := dieta.NewRoutes(&dietaRepository, logger, imessage)
 	dietaRoutes.SetupRoutes()
 
-	log.Print("waiting for msgs")
-	err = s.Start()
+	pingPongRoutes := ping_pong.NewRoutes(logger, imessage)
+	pingPongRoutes.SetupRoutes()
+
+	logger.Print("waiting for msgs")
+	err = imessage.Start()
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -33,9 +39,8 @@ func main() {
 }
 
 func getEnvWithFallback(env, fallback string) string {
-	actual, present := os.LookupEnv(env)
-	if present == false {
-		return fallback
+	if actual, present := os.LookupEnv(env); present {
+		return actual
 	}
-	return actual
+	return fallback
 }

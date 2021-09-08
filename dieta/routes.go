@@ -2,6 +2,7 @@ package dieta
 
 import (
 	"fmt"
+	"log"
 
 	"github.com/golift/imessage"
 )
@@ -18,16 +19,19 @@ Questo era un messaggio automatico.`, d.repo.GetForToday())
 		To:   msg.From,
 		Text: res,
 	})
+	d.logger.Printf("Sent message from DietaRoute to %s.", msg.From)
 }
 
 type Dependencies struct {
-	repo     *DietaRepository
+	repo     *dietaRepository
+	logger *log.Logger
 	imessage *imessage.Messages
 }
 
-func New(repo *DietaRepository, imessage *imessage.Messages) Dependencies {
+func NewRoutes(repo *dietaRepository, logger *log.Logger, imessage *imessage.Messages) Dependencies {
 	return Dependencies{
 		repo:     repo,
+		logger: logger,
 		imessage: imessage,
 	}
 }

@@ -6,25 +6,25 @@ import (
 	"time"
 )
 
-type DietaRepository struct {
+type dietaRepository struct {
 	dieta []string
 }
 
-func NewDietaRepository(path string) DietaRepository {
+func NewRepository(path string) dietaRepository {
 	daysofweek, err := ioutil.ReadFile(path)
 	if err != nil {
 		panic(1)
 	}
 
-	return DietaRepository{
+	return dietaRepository{
 		dieta: strings.Split(string(daysofweek), "---"),
 	}
 }
 
-func (d *DietaRepository) GetFromDayOfWeek(daysofweek int) string {
+func (d *dietaRepository) getFromDayOfWeek(daysofweek int) string {
 	return strings.TrimSpace(d.dieta[daysofweek-1])
 }
 
-func (d *DietaRepository) GetForToday() string {
-	return d.GetFromDayOfWeek(int(time.Now().Weekday()))
+func (d *dietaRepository) GetForToday() string {
+	return d.getFromDayOfWeek(int(time.Now().Weekday()))
 }
