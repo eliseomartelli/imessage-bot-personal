@@ -10,15 +10,15 @@ type dietaRepository struct {
 	dieta []string
 }
 
-func NewRepository(path string) dietaRepository {
+func NewRepository(path string) (dietaRepository, error) {
 	daysofweek, err := ioutil.ReadFile(path)
 	if err != nil {
-		panic(1)
+		return dietaRepository{}, err
 	}
 
 	return dietaRepository{
 		dieta: strings.Split(string(daysofweek), "---"),
-	}
+	}, nil
 }
 
 func (d *dietaRepository) getFromDayOfWeek(daysofweek int) string {

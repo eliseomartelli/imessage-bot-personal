@@ -29,7 +29,10 @@ func main() {
 		log.Fatalln(err)
 	}
 
-	dietaRepository := dieta.NewRepository(getEnvWithFallback("DIET_FILE_PATH", "/tmp/dieta.md"))
+	dietaRepository, err := dieta.NewRepository(getEnvWithFallback("DIET_FILE_PATH", "/tmp/dieta.md"))
+	if err != nil {
+		log.Fatalln(err)
+	}
 	dietaRoutes := dieta.NewRoutes(&dietaRepository, allowed, logger, imessage)
 	dietaRoutes.SetupRoutes()
 
