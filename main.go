@@ -67,7 +67,7 @@ func getAllowedList(logger *log.Logger, path string) (*hashset.Hashset, error) {
 	allowedContacts := strings.Split(string(file), "\n")
 
 	for _, contact := range allowedContacts {
-		if strings.HasPrefix(contact, "+") {
+		if len(contact) > 1 {
 			allowed.Add(contact)
 			logger.Printf("Added %s to allowed contacts.", contact)
 		}
