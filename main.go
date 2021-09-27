@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 	"os"
+	"sendmessages/calendar"
 	"sendmessages/dieta"
 	"sendmessages/hashset"
 	"sendmessages/ping_pong"
@@ -28,6 +29,14 @@ func main() {
 	if err != nil {
 		log.Fatalln(err)
 	}
+
+	calRepository, err := calendar.NewRepository(getEnvWithFallback("UNI_CALENDAR", ""), getEnvWithFallback("WORK_CALENDAR", ""))
+	if err != nil {
+		log.Fatalln(err)
+	}
+	calRoutes := calendar.NewRoutes(&calRepository, allowed, logger, imessage)
+	calRoutes.SetupRoutes()
+
 
 	dietaRepository, err := dieta.NewRepository(getEnvWithFallback("DIET_FILE_PATH", "/tmp/dieta.md"))
 	if err != nil {
